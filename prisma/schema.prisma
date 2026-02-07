@@ -1,0 +1,39 @@
+generator client {
+  provider =  prisma-client
+}
+
+datasource db {
+  provider = postgresql
+  url      = env(DATABASE_URL)
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model Tenant {
+  id        Int             @id @default(autoincrement())
+  name      String
+  slug      String          @unique
+  users     User[]
+  analytics AnalyticsData[]
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  name     String?
+  role     Role
+  tenantId Int
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+}
+
+model AnalyticsData {
+  id        Int      @id @default(autoincrement())
+  value     Float
+  timestamp DateTime @default(now())
+  tenantId  Int
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+}

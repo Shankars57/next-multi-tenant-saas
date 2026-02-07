@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Multi-Tenant SaaS Platform (Next.js 14)
 
-## Getting Started
+This project is a full multi-tenant SaaS scaffold built with Next.js 14 (App Router), Prisma, PostgreSQL, NextAuth v5, Docker, and Server Actions.
 
-First, run the development server:
+## Features
+- Multi-tenant routing: /tenants/{tenantSlug}/...
+- RBAC: ADMIN and MEMBER
+- NextAuth v5 credentials auth via Server Actions
+- RSC + streaming dashboard widgets
+- SSE real-time feed endpoint
+- CSV export endpoint
+- Search + pagination with URL sync
+- Intercepting route modal
+- Parallel routes for analytics & support
+- Health check API
+- Error boundary handling
 
-```bash
+## Requirements
+- Docker + Docker Compose
+- Node.js 20+ (for local dev)
+
+## Quick Start (Docker)
+1. Copy envs
+`
+cp .env.example .env
+`
+
+2. Build and run
+`
+docker-compose up --build
+`
+
+The database is seeded automatically via /docker-entrypoint-initdb.d/seed.sql.
+
+## Local Development
+1. Install deps
+`
+npm install
+`
+
+2. Set envs
+`
+cp .env.example .env
+`
+
+3. Generate Prisma client
+`
+npm run prisma:generate
+`
+
+4. Push schema & seed
+`
+npm run db:push
+npm run prisma:seed
+`
+
+5. Run dev server
+`
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Test Credentials
+- Admin
+  - Email: dmin@test.com
+  - Password: password123
+- Member
+  - Email: member@test.com
+  - Password: password123
+- Tenant slug: cme-corp
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Key Routes
+- / login
+- /tenants/{tenantSlug}/dashboard
+- /tenants/{tenantSlug}/data
+- /profile
+- /api/health
+- /api/events
+- /api/export
+- /faulty-page
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Required Files
+- Dockerfile
+- docker-compose.yml
+- .env.example
+- submission.json
+- prisma/schema.prisma
+- prisma/seed.sql
+- pp/*
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+- All interactive UI elements include required data-testid attributes.
+- The CSV export endpoint returns export.csv with a header and at least one row.
+- SSE uses data: {json}\n\n framing.
